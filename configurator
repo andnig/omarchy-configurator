@@ -1,15 +1,22 @@
 #!/bin/bash
 
-OMARCHY_LOGO='                 ▄▄▄                                                   
- ▄█████▄    ▄███████████▄    ▄███████   ▄███████   ▄███████   ▄█   █▄    ▄█   █▄ 
-███   ███  ███   ███   ███  ███   ███  ███   ███  ███   ███  ███   ███  ███   ███
-███   ███  ███   ███   ███  ███   ███  ███   ███  ███   █▀   ███   ███  ███   ███
-███   ███  ███   ███   ███ ▄███▄▄▄███ ▄███▄▄▄██▀  ███       ▄███▄▄▄███▄ ███▄▄▄███
-███   ███  ███   ███   ███ ▀███▀▀▀███ ▀███▀▀▀▀    ███      ▀▀███▀▀▀███  ▀▀▀▀▀▀███
-███   ███  ███   ███   ███  ███   ███ ██████████  ███   █▄   ███   ███  ▄██   ███
-███   ███  ███   ███   ███  ███   ███  ███   ███  ███   ███  ███   ███  ███   ███
- ▀█████▀    ▀█   ███   █▀   ███   █▀   ███   ███  ███████▀   ███   █▀    ▀█████▀ 
-                                       ███   █▀                                  '
+OMARCHY_LOGO='                    ▄▄▄▄█████▀ ▄███▄
+              ▗▄███████████▀ ▗███████▄
+              ▟██████████▀ ▗▟██████████▄
+             ▗█████████▀    ▝▀▀▀▜████████▄
+             ▟███████▀             ▝███████▄▖      ▐████▙▄▖ ▗▄███▙▄  ▐██▌  ▐██  █████▄▄   ██▌  ██▌  ▗▄███▙▄  ▐██   ██▌  ▗▟███▄▖  ▐██████▌
+            ▗██████▀                ▜████████▙     ▐██▀▀▜██ ██▛▀▀██▌ ▐███▖ ▐██  ██▛▀▀██▙  ██▌  ██▌  ██▛▀▀██▌ ▐██   ██▌ ▗██▀ ▀██  ▐██
+            ▟████▛                   ████████▌     ▐██   ██ ██▌  ██▌ ▐███▙ ▐██  ██▌  ▐██  ██▌  ██▌  ██▌  ██▌ ▐██   ██▌ ▝██▖      ▐██
+           ▗█████▙                   ▐██████▛      ▐██  ▐██ ██▌  ██▌ ▐██▜█▖▐██  ██▌  ▐██  ██▙▄▄██▌  ██▌  ██▌ ▐██   ██▌  ▀██▄▖    ▐██▄▄▄
+           ▟██████▖                   ██████▘      ▐█████▛▘ ██▌  ██▌ ▐██ ██▐██  ██▌  ▐██  ███████▌  ██▌  ██▌ ▐██   ██▌    ▀██▙▖  ▐█████
+          ▗████████                   ▝████▛       ▐██      ██▌  ██▌ ▐██ ▐████  ██▌  ▐██  ██▌  ██▌  ██▌  ██▌ ▐██   ██▌      ▜██  ▐██
+           ▄  ▀▀▀▀█▌                 ▖ ▜███▘       ▐██      ██▌  ██▌ ▐██  ▜███  ██▌  ▟█▛  ██▌  ██▌  ██▌  ██▌ ▐██▖ ▗██▌ ▐██  ▗██▌ ▐██
+            ▀██▙▄▄▄                ▄██ ▝██▛        ▐██      ▝█████▛  ▐██   ███  ██████▛▘  ██▌  ██▌  ▝█████▛   ▀█████▀   ▀█████▛  ▐██████▌
+              ▀███████▄▄▄▄      ▗▄████▌ ▜█▘
+                ▜████████████▄▄▟███████ ▝▛
+                  ▜████████████████████▌
+                   ▝▜█████████████▛▀▀▀
+                     ▝▜███▛▀▀▀▘ '
 
 # Install prerequisites
 if ! command -v gum >/dev/null || ! command -v iwctl >/dev/null; then
@@ -119,12 +126,12 @@ user_form() {
   email_address=$(gum input --placeholder "Used for git authentication (hit return to skip)" --prompt.foreground="#845DF9" --prompt "Email address> ")
 
   while true; do
-    hostname=$(gum input --placeholder "Alphanumeric without spaces (or return for 'omarchy')" --prompt.foreground="#845DF9" --prompt "Hostname> ")
+    hostname=$(gum input --placeholder "Alphanumeric without spaces (or return for 'pondhouse-pc')" --prompt.foreground="#845DF9" --prompt "Hostname> ")
 
     if [[ "$hostname" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]]; then
       break
     else
-      hostname="omarchy"
+      hostname="pondhouse-pc"
       break
     fi
   done
@@ -186,7 +193,7 @@ get_disk_info() {
 }
 
 disk_form() {
-  step "Let's select where to install Omarchy..."
+  step "Let's select where to install Pondhouse Linux..."
 
   # Get available disks and format them with info
   local disk_options=""
