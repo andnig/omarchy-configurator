@@ -47,7 +47,19 @@ notice() {
   gum spin --spinner "globe" --title "$1" -- sleep "${2:-2}"
 }
 
-# STEP 1: NETWORK (OPTIONAL WHEN RUNNING OFFLINE INSTALLATION)
+# STEP 1: KEYBOARD LAYOUT
+
+keyboard_form() {
+  step "Let's setup your machine..."
+  keyboards=$'Albanian|al\nAmharic|et\nArmenian|am\nArabic|ara\nArabic (Egypt)|eg\nArabic (Iraq)|iq\nArabic (Morocco)|ma\nArabic (Syria)|sy\nAzerbaijani|az\nBambara|ml\nBangla|bd\nBelarusian|by\nBelgian|be\nBerber (Algeria, Latin)|dz\nBosnian|ba\nBraille|brai\nBulgarian|bg\nBurmese|mm\nChinese|cn\nCroatian|hr\nCzech|cz\nDanish|dk\nDari|af\nDhivehi|mv\nDutch|nl\nDzongkha|bt\nEnglish (Australia)|au\nEnglish (Cameroon)|cm\nEnglish (Ghana)|gh\nEnglish (New Zealand)|nz\nEnglish (Nigeria)|ng\nEnglish (South Africa)|za\nEnglish (UK)|uk\nEnglish (US)|us\nEsperanto|epo\nEstonian|ee\nFaroese|fo\nFilipino|ph\nFinnish|fi\nFrench|fr\nFrench (Canada)|ca\nFrench (Democratic Republic of the Congo)|cd\nFrench (Togo)|tg\nGeorgian|ge\nGerman|de\nGerman (Austria)|at\nGerman (Switzerland)|ch\nGreek|gr\nHebrew|il\nHungarian|hu\nIcelandic|is\nIndian|in\nIndonesian (Latin)|id\nIrish|ie\nItalian|it\nJapanese|jp\nKazakh|kz\nKhmer (Cambodia)|kh\nKorean|kr\nKyrgyz|kg\nLao|la\nLatvian|lv\nLithuanian|lt\nMacedonian|mk\nMalay (Jawi, Arabic Keyboard)|my\nMaltese|mt\nMoldavian|md\nMongolian|mn\nMontenegrin|me\nNepali|np\nNKo (AZERTY)|gn\nNorwegian|no\nPersian|ir\nPolish|pl\nPortuguese|pt\nPortuguese (Brazil)|br\nRomanian|ro\nRussian|ru\nSerbian|rs\nSinhala (phonetic)|lk\nSlovak|sk\nSlovenian|si\nSpanish|es\nSpanish (Latin American)|latam\nSwahili (Kenya)|ke\nSwahili (Tanzania)|tz\nSwedish|se\nTaiwanese|tw\nTajik|tj\nThai|th\nTswana|bw\nTurkmen|tm\nTurkish|tr\nUkrainian|ua\nUrdu (Pakistan)|pk\nUzbek|uz\nVietnamese|vn\nWolof|sn'
+  choice=$(printf '%s\n' "$keyboards" | cut -d'|' -f1 | gum choose --height 10 --selected "English (US)" --header "Select keyboard layout") || abort
+  keyboard=$(printf '%s\n' "$keyboards" | awk -F'|' -v c="$choice" '$1==c{print $2; exit}')
+  loadkeys "$keyboard" 2>/dev/null
+}
+
+keyboard_form
+
+# STEP 2: NETWORK (OPTIONAL WHEN RUNNING OFFLINE INSTALLATION)
 
 if [[ -z $NETWORK_NOT_NEEDED ]]; then
   step "Detecting network..."
@@ -86,18 +98,18 @@ if [[ -z $NETWORK_NOT_NEEDED ]]; then
   fi
 fi
 
-# STEP 2: USER
+# STEP 3: USER
 
 user_form() {
-  step "Let's setup your machine..."
+  step "Let's setup your user account..."
 
   while true; do
-    user_name=$(gum input --placeholder "Alphanumeric without spaces (like dhh)" --prompt.foreground="#845DF9" --prompt "User name> ") || abort
+    username=$(gum input --placeholder "Alphanumeric without spaces (like dhh)" --prompt.foreground="#845DF9" --prompt "Username> ") || abort
 
-    if [[ "$user_name" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]]; then
+    if [[ "$username" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]]; then
       break
     else
-      notice "User name must be alphanumeric with no spaces" 1
+      notice "Username must be alphanumeric with no spaces" 1
     fi
   done
 
@@ -136,21 +148,13 @@ user_form() {
   else
     timezone=$(timedatectl list-timezones | gum filter --height 10 --header "Timezone") || abort
   fi
-
-  # Pick keyboard layout
-  keyboards=$'Albanian|al\nAmharic|et\nArmenian|am\nArabic|ara\nArabic (Egypt)|eg\nArabic (Iraq)|iq\nArabic (Morocco)|ma\nArabic (Syria)|sy\nAzerbaijani|az\nBambara|ml\nBangla|bd\nBelarusian|by\nBelgian|be\nBerber (Algeria, Latin)|dz\nBosnian|ba\nBraille|brai\nBulgarian|bg\nBurmese|mm\nChinese|cn\nCroatian|hr\nCzech|cz\nDanish|dk\nDari|af\nDhivehi|mv\nDutch|nl\nDzongkha|bt\nEnglish (Australia)|au\nEnglish (Cameroon)|cm\nEnglish (Ghana)|gh\nEnglish (New Zealand)|nz\nEnglish (Nigeria)|ng\nEnglish (South Africa)|za\nEnglish (UK)|uk\nEnglish (US)|us\nEsperanto|epo\nEstonian|ee\nFaroese|fo\nFilipino|ph\nFinnish|fi\nFrench|fr\nFrench (Canada)|ca\nFrench (Democratic Republic of the Congo)|cd\nFrench (Togo)|tg\nGeorgian|ge\nGerman|de\nGerman (Austria)|at\nGerman (Switzerland)|ch\nGreek|gr\nHebrew|il\nHungarian|hu\nIcelandic|is\nIndian|in\nIndonesian (Latin)|id\nIrish|ie\nItalian|it\nJapanese|jp\nKazakh|kz\nKhmer (Cambodia)|kh\nKorean|kr\nKyrgyz|kg\nLao|la\nLatvian|lv\nLithuanian|lt\nMacedonian|mk\nMalay (Jawi, Arabic Keyboard)|my\nMaltese|mt\nMoldavian|md\nMongolian|mn\nMontenegrin|me\nNepali|np\nNKo (AZERTY)|gn\nNorwegian|no\nPersian|ir\nPolish|pl\nPortuguese|pt\nPortuguese (Brazil)|br\nRomanian|ro\nRussian|ru\nSerbian|rs\nSinhala (phonetic)|lk\nSlovak|sk\nSlovenian|si\nSpanish|es\nSpanish (Latin American)|latam\nSwahili (Kenya)|ke\nSwahili (Tanzania)|tz\nSwedish|se\nTaiwanese|tw\nTajik|tj\nThai|th\nTswana|bw\nTurkmen|tm\nTurkish|tr\nUkrainian|ua\nUrdu (Pakistan)|pk\nUzbek|uz\nVietnamese|vn\nWolof|sn'
-  keyboard=$(
-    choice=$(printf '%s\n' "$keyboards" | cut -d'|' -f1 |
-      gum choose --height 10 --selected "English (US)" --header "Keyboard layout") || abort
-    printf '%s\n' "$keyboards" | awk -F'|' -v c="$choice" '$1==c{print $2; exit}'
-  )
 }
 
 user_form
 
 while true; do
   echo -e "Field,Value
-User name,$user_name
+Username,$username
 Password,$(printf "%${#password}s" | tr ' ' '*')
 Full name,${full_name:-[Skipped]}
 Email address,${email_address:-[Skipped]}
@@ -163,11 +167,12 @@ Keyboard,$keyboard" |
   if gum confirm --negative "No, change it" "Does this look right?"; then
     break
   else
+    keyboard_form
     user_form
   fi
 done
 
-# STEP 3: DISK
+# STEP 4: DISK
 
 get_disk_info() {
   local device="$1"
@@ -233,22 +238,26 @@ boot_partition_size=$((2 * gib))
 main_partition_start=$((boot_partition_size + boot_partition_start))
 main_partition_size=$((disk_size_in_mib - main_partition_start - gpt_backup_reserve))
 
-cat <<-_EOF_ | tee user_credentials.json >/dev/null
+password_escaped=$(echo -n "$password" | jq -Rsa)
+password_hash_escaped=$(echo -n "$password_hash" | jq -Rsa)
+username_escaped=$(echo -n "$username" | jq -Rsa)
+
+cat <<-_EOF_ >user_credentials.json
 {
-    "encryption_password": "$password",
-    "root_enc_password": "$password_hash",
+    "encryption_password": $password_escaped,
+    "root_enc_password": $password_hash_escaped,
     "users": [
         {
-            "enc_password": "$password_hash",
+            "enc_password": $password_hash_escaped,
             "groups": [],
             "sudo": true,
-            "username": "$user_name"
+            "username": $username_escaped
         }
     ]
 }
 _EOF_
 
-cat <<-_EOF_ | tee user_configuration.json >/dev/null
+cat <<-_EOF_ >user_configuration.json
 {
     "app_config": null,
     "archinstall-language": "English",
@@ -322,7 +331,7 @@ cat <<-_EOF_ | tee user_configuration.json >/dev/null
             "encryption_type": "luks",
             "lvm_volumes": [],
             "partitions": [ "8c2c2b92-1070-455d-b76a-56263bab24aa" ],
-            "encryption_password": "$password"
+            "encryption_password": $password_escaped
         }
     },
     "hostname": "$hostname",
@@ -342,8 +351,9 @@ cat <<-_EOF_ | tee user_configuration.json >/dev/null
     "mirror_config": {
         "custom_repositories": [],
         "custom_servers": [
-            {"url": "https://geo.mirror.pkgbuild.com/\$repo/os/\$arch"},
-            {"url": "https://mirror.rackspace.com/archlinux/\$repo/os/\$arch"}
+            {"url": "https://mirror.omarchy.org/\$repo/os/\$arch"},
+            {"url": "https://mirror.rackspace.com/archlinux/\$repo/os/\$arch"},
+            {"url": "https://geo.mirror.pkgbuild.com/\$repo/os/\$arch"}
         ],
         "mirror_regions": {},
         "optional_repositories": []
